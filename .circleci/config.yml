@@ -1,8 +1,11 @@
-version: 2
+version: 2.1
 
 references:
   cache_key: &cache_key
     key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+orbs:
+  apptest-ai: apptestai/android-app-test@dev:0.0.1
 
 jobs:
   build:
@@ -25,8 +28,12 @@ jobs:
             - ~/.gradle/caches
             - ~/.gradle/wrapper
       - run:
-          name: Run JVM Tests & Lint
-          command: ./gradlew check
+          name: Run build
+          command: ./gradlew assembleDebug
+      - apptest-ai/run-test:
+          binary_path: app/build/outputs/apk/debug/app-debug.apk
+          access_key: d0b20cd289994be0e423e2c42f4c09fe
+          project_id: '793'
       - store_artifacts:
           path: app/build/reports
           destination: reports
