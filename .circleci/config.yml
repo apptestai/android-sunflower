@@ -5,7 +5,7 @@ references:
     key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
 orbs:
-  apptest-ai: apptestai/android-app-test@dev:0.0.6
+  apptest-ai: apptestai/android-app-test@dev:0.0.2
 
 jobs:
   build:
