@@ -37,5 +37,5 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
           destination: binary.apk
       - store_test_results:
-          path: apptest_result.json
-          destination: test_result.json
+          path: apptest_results.json
+          destination: test_results.json
