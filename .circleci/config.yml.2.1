@@ -1,0 +1,41 @@
+version: 2.1
+
+references:
+  cache_key: &cache_key
+    key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
+
+orbs:
+  apptest-ai: apptestai/android-app-test@dev:0.0.5
+
+jobs:
+  build:
+    docker:
+      - image: circleci/android:api-28-alpha
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xmx1024m"
+      GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+      TERM: dumb
+    steps:
+      - checkout
+      - restore_cache:
+          <<: *cache_key
+      - run:
+          name: Download Dependencies
+          command: ./gradlew dependencies
+      - save_cache:
+          <<: *cache_key
+          paths:
+            - ~/.gradle/caches
+            - ~/.gradle/wrapper
+      - run:
+          name: Run build
+          command: ./gradlew assembleDebug
+      - apptest-ai/run-test:
+          binary_path: app/build/outputs/apk/debug/app-debug.apk
+          project_id: '793'
+      - store_artifacts:
+          path: app/build/outputs/apk/debug/app-debug.apk
+          destination: binary.apk
+      - store_test_results:
+          path: apptest_results.json
+          destination: test_results.json
