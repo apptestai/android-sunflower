@@ -5,7 +5,7 @@ references:
     key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}-{{ checksum "gradle/wrapper/gradle-wrapper.properties" }}
 
 orbs:
-  apptest-ai: apptestai/android-app-test@dev:0.0.6
+  apptest-ai: apptestai/android-app-test@dev:0.0.8
 
 jobs:
   build:
@@ -31,8 +31,11 @@ jobs:
           name: Run build
           command: ./gradlew assembleDebug
       - apptest-ai/run-test:
-          binary_path: ./app/build/outputs/apk/debug/app-debug.apk
-          project_id: '793'
-          test_result_path: ./app/build/outputs/apk/debug
+          binary_path: app/build/outputs/apk/debug/app-debug.apk
+          project_id: '818'
       - store_artifacts:
-          path: ./app/build/outputs/apk/debug
+          path: app/build/outputs/apk/debug/app-debug.apk
+          destination: binary.apk
+      - store_test_results:
+          path: apptest_results.json
+          destination: test_results.json
